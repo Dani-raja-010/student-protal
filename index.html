@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stall Student Registration Portal</title>
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --bg: #f3f4f6;
+            --card-bg: #ffffff;
+            --text: #1f2937;
+            --border: #d1d5db;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 90vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 450px;
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        h2 {
+            margin-top: 0;
+            color: var(--primary);
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 15px;
+            box-sizing: border-box;
+            outline: none;
+            transition: border-color 0.2s;
+            font-family: inherit;
+        }
+
+        input:focus, textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            height: 80px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .error {
+            color: #dc2626;
+            font-size: 13px;
+            margin-top: 5px;
+            text-align: center;
+        }
+
+        .success-msg {
+            background-color: #d1fae5;
+            color: #065f46;
+            padding: 12px;
+            border-radius: 6px;
+            text-align: center;
+            margin-bottom: 16px;
+            font-weight: 500;
+        }
+
+        .admin-actions {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .secondary-btn {
+            background-color: #4b5563;
+        }
+        .secondary-btn:hover {
+            background-color: #374151;
+        }
+
+        .counter {
+            font-size: 13px;
+            color: #6b7280;
+            text-align: center;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- 1. LOGIN SCREEN -->
+        <div id="loginSection">
+            <h2>Stall Portal Login</h2>
+            <form id="loginForm" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label for="passcode">Enter Staff Passcode</label>
+                    <input type="password" id="passcode" placeholder="Enter PIN/Password" required>
+                </div>
+                <div id="loginError" class="error hidden">Incorrect passcode. Try again.</div>
+                <button type="submit">Login</button>
+            </form>
+        </div>
+
+        <!-- 2. DATA FORM SCREEN -->
+        <div id="formSection" class="hidden">
+            <h2>Student Data Collection</h2>
+            <div id="successBanner" class="hidden success-msg">Student registered successfully!</div>
+            
+            <form id="studentForm" onsubmit="handleFormSubmit(event)">
+                <div class="form-group">
+                    <label for="fullName">Full Name</label>
+                    <input type="text" id="fullName" placeholder="John Doe" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" placeholder="john@example.com" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="phone">Phone Number</label>
+                    <input type="tel" id="phone" placeholder="+1234567890" required>
+                </div>
+
+                <!-- Area of Interest with Suggestions -->
+                <div class="form-group">
+                    <label for="interest">Area of Interest</label>
+                    <input type="text" id="interest" list="interestOptions" placeholder="Select or type an interest" required>
+                    <datalist id="interestOptions">
+                        <option value="Software Development">
+                        <option value="Web Development">
+                        <option value="Artificial Intelligence (AI)">
+                        <option value="Graphic Designing">
+                        <option value="Cybersecurity">
+                        <option value="Robotics">
+                        <option value="Video Editing">
+                        <option value="Data Science">
+                        <option value="UI/UX Design">
+                    </datalist>
+                </div>
+
+                <!-- NEW: About Me / Short Bio Field -->
+                <div class="form-group">
+                    <label for="aboutMe">About Me / Short Bio</label>
+                    <textarea id="aboutMe" placeholder="Tell us a bit about yourself (e.g., current grade, skills, or what you're building)..."></textarea>
+                </div>
+
+                <button type="submit">Submit Data</button>
+            </form>
+
+            <div class="admin-actions">
+                <button type="button" class="secondary-btn" onclick="exportData()">Download CSV</button>
+                <button type="button" class="secondary-btn" onclick="logout()" style="background-color: #9ca3af;">Logout</button>
+            </div>
+
+            <div class="counter" id="submissionCounter">Total Submissions: 0</div>
+        </div>
+    </div>
+
+    <script>
+        const STAFF_PASSCODE = "1234";
+
+        function handleLogin(event) {
+            event.preventDefault();
+            const input = document.getElementById('passcode').value;
+            const errorDiv = document.getElementById('loginError');
+
+            if (input === STAFF_PASSCODE) {
+                document.getElementById('loginSection').classList.add('hidden');
+                document.getElementById('formSection').classList.remove('hidden');
+                updateCounter();
+                document.getElementById('loginForm').reset();
+                errorDiv.classList.add('hidden');
+            } else {
+                errorDiv.classList.remove('hidden');
+            }
+        }
+
+        function handleFormSubmit(event) {
+            event.preventDefault();
+
+            const student = {
+                name: document.getElementById('fullName').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                interest: document.getElementById('interest').value,
+                about: document.getElementById('aboutMe').value,
+                timestamp: new Date().toLocaleString()
+            };
+
+            let submissions = JSON.parse(localStorage.getItem('stall_students') || '[]');
+            submissions.push(student);
+            localStorage.setItem('stall_students', JSON.stringify(submissions));
+
+            const banner = document.getElementById('successBanner');
+            banner.classList.remove('hidden');
+            setTimeout(() => banner.classList.add('hidden'), 3000);
+
+            document.getElementById('studentForm').reset();
+            updateCounter();
+        }
+
+        function updateCounter() {
+            let submissions = JSON.parse(localStorage.getItem('stall_students') || '[]');
+            document.getElementById('submissionCounter').innerText = `Total Submissions: ${submissions.length}`;
+        }
+
+        function exportData() {
+            let submissions = JSON.parse(localStorage.getItem('stall_students') || '[]');
+            if (submissions.length === 0) {
+                alert("No data collected yet!");
+                return;
+            }
+
+            let csvContent = "data:text/csv;charset=utf-8,Full Name,Email,Phone,Interest,About Me,Timestamp\n";
+            submissions.forEach(s => {
+                // Clean up any extra newlines in the bio text so CSV formatting doesn't break
+                let safeAbout = (s.about || "").replace(/(\r\n|\n|\r)/gm, " ");
+                csvContent += `"${s.name}","${s.email}","${s.phone}","${s.interest}","${safeAbout}","${s.timestamp}"\n`;
+            });
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "student_data.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function logout() {
+            document.getElementById('formSection').classList.add('hidden');
+            document.getElementById('loginSection').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
